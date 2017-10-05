@@ -20,12 +20,17 @@ class App extends Component {
       reset,
     } = this.props;
     return (
-      <div>
-        <h1 className="current-player">current : {turn}</h1>
-        
-        <div className={`board row board--${ended ? 'ended' : ''}`}>
-          <div className={`player player--${turn !== 'player1' ? 'current' : ''}`}>
-            <p className="score">Player 2 score:&nbsp;{p2Score}</p>
+      <div class="app">
+        <h1 className="current-player">Player {turn.slice(-1)} Go!</h1>
+        <div
+          className={`board row board--${ended ? 'ended' : ''} board--${turn}`}
+        >
+          <div
+            className={`score player player--${turn !== 'player1'
+              ? 'current'
+              : ''}`}
+          >
+            <p>Player 2 score:&nbsp;{p2Score}</p>
           </div>
           <div className="rows">
             <ul className="row row--player-2">
@@ -58,17 +63,25 @@ class App extends Component {
               ))}
             </ul>
           </div>
-          <div className={`player player--${turn === 'player1' ? 'current' : ''}`}>
-            <p className="score">Player 1 score:&nbsp;{p1Score}</p>
+          <div
+            className={`score player player--${turn === 'player1'
+              ? 'current'
+              : ''}`}
+          >
+            <p>Player 1 score:&nbsp;{p1Score}</p>
           </div>
         </div>
         {ended && winner.length ? (
           <div className="game-over">
-            <h2>{winner}</h2><button onClick={reset}>Click to Reset</button>
+            <h2>{winner}</h2>
+            <button onClick={reset}>Click to Reset</button>
           </div>
         ) : null}
         {ended && !winner.length ? (
-          <div className="game-over" >Game over! <button onClick={tallyScore}>Click to tally score</button></div>
+          <div className="game-over">
+            Game over!{' '}
+            <button onClick={tallyScore}>Click to tally score</button>
+          </div>
         ) : null}
       </div>
     );
@@ -103,7 +116,6 @@ const tallyScore = () => ({
 const mapDispatchToProps = dispatch => {
   return {
     sew(pocket) {
-      console.log('pocket', pocket);
       dispatch(sewPocket(pocket));
     },
     tallyScore() {

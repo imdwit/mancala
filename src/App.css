@@ -1,3 +1,10 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+}
+
 .board {
   max-width: 900px;
   margin: 0 auto;
@@ -33,8 +40,10 @@ li {
 }
 
 
-.board {
-  transition: all 2s;
+.board,
+.board li,
+.board .score  {
+  transition: all 0.75s ease 0.33s;
 }
 
 .board--ended li {
@@ -42,20 +51,25 @@ li {
   opacity: 0.5;
 }
 
-.board--player2,
+.board--player2{
+  /* transform: rotate(180deg); */
+}
+
 .board--player2 li,
 .board--player2 .score {
-  /* transform: rotate(180deg); */
+  /* transform: rotate(-180deg); */
 }
 
 .player {
   border-radius: 5%;
   padding: 0.25em;
   border: 1px solid brown;
+
+  transition: all .25s;
 }
 .player--current {
   border-color: green;
-  border-width: 2px;
+  box-shadow: 2px 2px 3px #eee;
 }
 
 .current-player {
