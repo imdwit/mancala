@@ -89,11 +89,15 @@ const mancala = (state = initialState, action) => {
       let lastMarbleDroppedAt = lastMarbleDropped.i;
 
       const isOnCurrentPlayersSide = sides[currentPlayer].includes(stop);
-      log('last marble dropped at', lastMarbleDropped);
       if (lastMarbleDroppedAt > 6 && lastMarbleDroppedAt !== 13) {
+        // increment since the array doesn't include the opponent's mancala
         lastMarbleDropped = board[lastMarbleDroppedAt + 1];
       }
       if (hasNoMarbles(lastMarbleDropped) && isOnCurrentPlayersSide) {
+        // we get to collect the marbles from the other players side
+        //@TODO DRY up and refactor this section
+
+        // this section matches up my side with your side to collect your marbles
         const index =
           lastMarbleDroppedAt > 6
             ? sides[currentPlayer]
@@ -108,14 +112,15 @@ const mancala = (state = initialState, action) => {
         const { i: idToEmpty, marbles: marblesToCapture } = adjacentSide;
         const mancalaToAddTo = updatedBoard[mancalas[currentPlayer]];
 
-        log('adjacentSide', adjacentSide);
         updatedBoard = updatedBoard.map(pocket => {
           if (pocket.i == mancalaToAddTo.i) {
+            // add the marbles to your mancala
             return {
               ...pocket,
               marbles: mancalaToAddTo.marbles + marblesToCapture + 1,
             };
           }
+          // empty out the adjacent pocket, and the pocket you landed on
           if (pocket.i == idToEmpty || pocket.i == lastMarbleDropped.i) {
             return {
               ...pocket,
@@ -126,6 +131,7 @@ const mancala = (state = initialState, action) => {
         });
       }
 
+      // theres definitely a DRYer way to swap players
       if (currentPlayer === 'player1' && stop === p1mancala) {
         turn = 'player1';
       } else if (currentPlayer === 'player2' && stop + 1 === p2mancala) {
@@ -181,11 +187,16 @@ const mancala = (state = initialState, action) => {
 export default mancala;
 
 export function addMarbles(arr, n, i) {
+  // the board is one big array, 0 - 13
+    // excluding the opponents mancala
+      // player 1:[0-12], player 2[0-13](excluding board[6])
   if (n < 1) return arr;
   var $i = i + 1;
   var $j = 0;
-  var a = Array.from(arr);
+  var a = Array.from(arr); // copy the array
   a[i].marbles = 0;
+  //zero out the current index
+    // then loop over the array incrementing each index's marbles until we run out
   while ($j++ < n) {
     if ($i >= arr.length) $i = 0;
     a[$i].marbles++;
