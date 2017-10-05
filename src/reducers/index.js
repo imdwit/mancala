@@ -2,7 +2,14 @@ export const p1mancala = 6;
 export const p2mancala = 13;
 const pockets1 = [0, 1, 2, 3, 4, 5]; // first row of pockets
 const pockets2 = [7, 8, 9, 10, 11, 12]; // second row of pockets
-
+const sides = {
+  player1: pockets1,
+  player2: pockets2,
+};
+const mancalas = {
+  player1: p1mancala,
+  player2: p2mancala,
+};
 /*
   board:
     [13, 12, 11, 10, 9, 8, 7]
@@ -52,19 +59,20 @@ const mancala = (state = initialState, action) => {
   switch (action.type) {
     case 'SEW':
       let { i, n } = action;
-      const { turn: currentPlayer, board } = state;
+      const { turn: currentPlayer } = state;
+      const board = Array.from(state.board);
       const otherMancala = currentPlayer === 'player2' ? p1mancala : p2mancala;
       const currentPlayersPockets = state[currentPlayer].pockets;
 
       const arr = currentPlayersPockets.map(id => Object.assign({}, board[id]));
 
       const playersPockets = addMarbles(arr, n, i);
-      const updatedBoard = [
+      var updatedBoard = [
         ...playersPockets.slice(0, otherMancala),
         board[otherMancala],
         ...playersPockets.slice(otherMancala),
       ];
-      const stop = i + n;
+      let stop = i + n;
       let turn;
 
       // check if either side has been cleared
@@ -74,6 +82,48 @@ const mancala = (state = initialState, action) => {
       const hasNoMarbles = p => p.marbles === 0;
       if (row1.every(hasNoMarbles) || row2.every(hasNoMarbles)) {
         ended = true;
+      }
+
+      if (stop >= board.length) stop = stop - board.length + 1;
+      let lastMarbleDropped = board[stop];
+      let lastMarbleDroppedAt = lastMarbleDropped.i;
+
+      const isOnCurrentPlayersSide = sides[currentPlayer].includes(stop);
+      log('last marble dropped at', lastMarbleDropped);
+      if (lastMarbleDroppedAt > 6 && lastMarbleDroppedAt !== 13) {
+        lastMarbleDropped = board[lastMarbleDroppedAt + 1];
+      }
+      if (hasNoMarbles(lastMarbleDropped) && isOnCurrentPlayersSide) {
+        const index =
+          lastMarbleDroppedAt > 6
+            ? sides[currentPlayer]
+                .slice(0, 6)
+                .reverse()
+                .indexOf(lastMarbleDroppedAt) - 1
+            : sides[currentPlayer].indexOf(lastMarbleDroppedAt);
+        const adjacentSide =
+          lastMarbleDroppedAt > 6
+            ? updatedBoard[index]
+            : updatedBoard.slice(7, 13).reverse()[index];
+        const { i: idToEmpty, marbles: marblesToCapture } = adjacentSide;
+        const mancalaToAddTo = updatedBoard[mancalas[currentPlayer]];
+
+        log('adjacentSide', adjacentSide);
+        updatedBoard = updatedBoard.map(pocket => {
+          if (pocket.i == mancalaToAddTo.i) {
+            return {
+              ...pocket,
+              marbles: mancalaToAddTo.marbles + marblesToCapture + 1,
+            };
+          }
+          if (pocket.i == idToEmpty || pocket.i == lastMarbleDropped.i) {
+            return {
+              ...pocket,
+              marbles: 0,
+            };
+          }
+          return pocket;
+        });
       }
 
       if (currentPlayer === 'player1' && stop === p1mancala) {
@@ -108,7 +158,10 @@ const mancala = (state = initialState, action) => {
         { ...b[p2mancala], marbles: p2Score },
       ];
 
-      const winner = p1Score == p2Score ? 'Its a tie!' : p1Score > p2Score ? 'player 1 winds' : 'player 2 wins';
+      const winner =
+        p1Score == p2Score
+          ? 'Its a tie!'
+          : p1Score > p2Score ? 'player 1 wins' : 'player 2 wins';
       return {
         ...state,
         ended: true,
@@ -117,7 +170,6 @@ const mancala = (state = initialState, action) => {
       };
 
     case 'RESET':
-      console.log('reset');
       return {
         ...initialState,
       };
