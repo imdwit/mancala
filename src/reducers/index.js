@@ -20,7 +20,7 @@ export default function mancala(state = initialState, action) {
       const { board, turn, skip } = state;
       const n = board[i];
       const boardAfterZeroing = zeroAtIndex(board, i);
-      const boardAFterAdding = addMarbles(boardAfterZeroing, i, n, skip[turn]);
+      const boardAfterAdding = addMarbles(boardAfterZeroing, i, n, skip[turn]);
 
       /*
         check if it landed in  my side
@@ -32,7 +32,7 @@ export default function mancala(state = initialState, action) {
 
       return {
         ...state,
-        board: boardAFterAdding,
+        board: boardAfterAdding,
       };
     default:
       return state;
