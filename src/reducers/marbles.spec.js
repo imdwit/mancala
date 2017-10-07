@@ -1,52 +1,52 @@
-import { addMarbles, initialState } from './index';
-const print = obj => JSON.stringify(obj, null, 2);
+'use strict';
+import { board, increment, log, print, addMarbles, zeroAtIndex } from './redo';
 
-describe('marbles', () => {
-  var state;
-  var board;
-  var pockets;
-  beforeEach(() => {
-    state = Object.assign({}, initialState);
-    board = state.board;
-    pockets = Array.from(board).slice(0, 6);
-    console.log('before', pockets)
-  });
+describe('Mancala', () => {
+  describe('addMarbles', () => {
 
-  afterEach(() => {
-    state = null;
-    board = null;
-    pockets = [];
-  });
-
-  xit('should not modify the length of the array', () => {
-    const index = 1;
-    expect(pockets[index].marbles).toBe(4);
-    const p = addMarbles(pockets, 0, index);
-    expect(p.length).toBe(pockets.length);
-  });
-
-  xit('should empty the pocket at the index', () => {
-    const index = 1;
-    const n = 3;
-    console.log(pockets);
-    const p = addMarbles(pockets, n, index);
-    expect(p[index].marbles).toBe(0);
-  });
-
-  xit('should add one to each pocket in turn', () => {
-    const index = 1;
-    const n = 3;
-    const $pockets = [...pockets.slice()];
-    const p = addMarbles(pockets, n, index);
-    const s = pockets
-      .slice(index + 1)
-      .every(
-        (p, i, arr) => {
-          console.log(i, p, pockets[p.i])
-           return p.marbles == pockets[p.i].marbles
-        }
-      );
-    expect(s).toBe(true);
-    expect(p[index].marbles).toBe(0);
+    test('increments from i to n', () => {
+      const i = 0;
+      const n = 4;
+      const state = board.slice();
+      const expected = [4, 5, 5, 5, 5, 4, 0, 4, 4, 4, 4, 4, 4, 0];
+      
+      const actual = addMarbles(state, i, n);
+      
+      expect(actual).toEqual(expected);
+    });
+    
+    test('if i + n is out of bounds, iterate from i to the end, then start at the begining', () => {
+      const i = 10;
+      const n = 8;
+      const state = board.slice();
+      //                                              i
+      const expected = [5, 5, 5, 5, 5, 4, 0, 4, 4, 4, 4, 5, 5, 1];
+      
+      const actual = addMarbles(state, i, n);
+      
+      expect(actual).toEqual(expected);
+    });
+    
+    test('do not increment the skipped index', () => {
+      const i = 0;
+      const n = 15;
+      const state = board.slice();
+      const skip = 6;
+      const expected = [5, 6, 5, 5, 5, 5, 0, 5, 5, 5, 5, 5, 5, 1];
+      
+      const actual = addMarbles(state, i, n, skip);
+      
+      expect(actual).toEqual(expected);
+    });
+    
+  })
+    describe('zerAtIndex', () => {
+    test('pocket at index 1 should be set to 0', () => {
+      const i = 1;
+      const state = board.slice(0, 6);
+      const actual = zeroAtIndex(state, i);
+      const expected = [4, 0, 4, 4, 4, 4];
+      expect(actual).toEqual(expected);
+    });
   });
 });
