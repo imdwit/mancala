@@ -29,3 +29,6 @@ export function zeroAtIndex(board, i) {
 }
 
 
+export function calculateIndex({i, l, n}) {
+  
+}

@@ -38,7 +38,7 @@ describe('Mancala', () => {
       expect(actual).toEqual(expected);
     });
   });
-  describe('zerAtIndex', () => {
+  describe('zeroAtIndex', () => {
     test('pocket at index 1 should be set to 0', () => {
       const i = 1;
       const state = board.slice(0, 6);
@@ -46,5 +46,9 @@ describe('Mancala', () => {
       const expected = [4, 0, 4, 4, 4, 4];
       expect(actual).toEqual(expected);
     });
+  });
+
+  describe('calculateIndex', () => {
+
   });
 });
