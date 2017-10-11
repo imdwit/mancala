@@ -1,5 +1,5 @@
 'use strict';
-import { board, increment, log, print, addMarbles, zeroAtIndex } from './redo';
+import { board, increment, log, print, addMarbles, zeroAtIndex, calculateIndex } from './redo';
 
 describe('Mancala', () => {
   describe('addMarbles', () => {
@@ -49,6 +49,23 @@ describe('Mancala', () => {
   });
 
   describe('calculateIndex', () => {
+    test('given the index to start, the count and length of the array, calculate the index we end up with', () => {
+      const i = 1;
+      const l = board.length;
+      const n = 7;
 
+      const expected = 8;
+      const actual = calculateIndex({i, l, n});
+
+      expect(actual).toBe(expected);
+    });
+    test('" same as above but should cycle from the beginning, if we go over the length', () => {
+      const i = 10;
+      const l = board.length;
+      const n = 8;
+      const expected = 4;
+      const actual = calculateIndex({i, l, n});
+      expect(actual).toBe(expected);
+    });
   });
 });
