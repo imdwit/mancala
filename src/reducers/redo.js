@@ -30,5 +30,7 @@ export function zeroAtIndex(board, i) {
 
 
 export function calculateIndex({i, l, n}) {
-  
+  if (i + n < l) return i + n;
+  var a = Math.abs(i - l);
+  return calculateIndex({i: 0, n: n - a, l})
 }
